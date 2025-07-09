@@ -1,0 +1,1535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, minimum-scale=0.5, maximum-scale=3.0">
+  <title>Bitcoin Advanced Pattern Recognition - Enhanced Analysis</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+  <script src="https://unpkg.com/lightweight-charts@4.0.0/dist/lightweight-charts.standalone.production.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: #e2e8f0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      overflow-x: hidden;
+    }
+    
+    .glass-effect {
+      background: rgba(15, 23, 42, 0.4);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .pattern-card {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(51, 65, 85, 0.6));
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      transition: all 0.3s ease;
+    }
+    
+    .pattern-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      border-color: rgba(34, 197, 94, 0.5);
+    }
+    
+    .chart-wrapper {
+      background: linear-gradient(135deg, #1e293b, #334155);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .pattern-indicator {
+      position: absolute;
+      z-index: 1000;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: bold;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+    }
+    
+    .bullish-pattern {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: white;
+    }
+    
+    .bearish-pattern {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: white;
+    }
+    
+    .neutral-pattern {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: white;
+    }
+    
+    .harmonic-pattern {
+      background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+      color: white;
+    }
+    
+    .pattern-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+    
+    .stat-card {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(51, 65, 85, 0.6));
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      padding: 1rem;
+      border-radius: 8px;
+      text-align: center;
+    }
+    
+    .accuracy-indicator {
+      width: 100%;
+      height: 8px;
+      background: #374151;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    
+    .accuracy-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #ef4444, #f59e0b, #22c55e);
+      transition: width 0.3s ease;
+    }
+    
+    .pattern-toggle {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      color: #e2e8f0;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 12px;
+    }
+    
+    .pattern-toggle:hover {
+      background: rgba(51, 65, 85, 0.8);
+      border-color: rgba(34, 197, 94, 0.5);
+    }
+    
+    .pattern-toggle.active {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      border-color: #22c55e;
+      color: white;
+    }
+    
+    .settings-panel {
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+    }
+    
+    .tooltip-advanced {
+      position: absolute;
+      pointer-events: none;
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(10px);
+      color: #e2e8f0;
+      font-size: 12px;
+      padding: 12px;
+      border-radius: 8px;
+      display: none;
+      z-index: 10000;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      max-width: 300px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+    
+    .pattern-strength {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    
+    .strength-dots {
+      display: flex;
+      gap: 2px;
+    }
+    
+    .strength-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #374151;
+    }
+    
+    .strength-dot.active {
+      background: #22c55e;
+    }
+    
+    .alert-panel {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 10000;
+      max-width: 350px;
+    }
+    
+    .alert-item {
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 8px;
+      animation: slideIn 0.3s ease;
+    }
+    
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    
+    .fibonacci-level {
+      stroke-dasharray: 5, 5;
+      opacity: 0.7;
+    }
+    
+    .pattern-confidence {
+      font-size: 10px;
+      opacity: 0.8;
+    }
+    
+    @media (max-width: 768px) {
+      .pattern-stats {
+        grid-template-columns: 1fr;
+      }
+      
+      .settings-panel {
+        padding: 1rem;
+      }
+      
+      .pattern-toggle {
+        padding: 6px 12px;
+        font-size: 10px;
+      }
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-slate-900 to-gray-800">
+  <div class="container mx-auto px-4 py-6">
+    <header class="text-center mb-6">
+      <h1 class="text-4xl font-bold bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent mb-2">
+        <i class="fas fa-chart-line mr-2"></i>
+        Bitcoin Advanced Pattern Recognition
+      </h1>
+      <p class="text-gray-300">Enhanced Multi-Timeframe Analysis with AI-Powered Pattern Detection</p>
+    </header>
+
+    <!-- Pattern Statistics -->
+    <div class="pattern-stats glass-effect rounded-lg p-4 mb-6">
+      <div class="stat-card">
+        <div class="text-sm text-gray-400 mb-2">Patterns Detected</div>
+        <div class="text-2xl font-bold text-green-400" id="patterns-count">0</div>
+        <div class="accuracy-indicator">
+          <div class="accuracy-bar" style="width: 0%" id="accuracy-bar"></div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="text-sm text-gray-400 mb-2">Signal Strength</div>
+        <div class="text-2xl font-bold text-blue-400" id="signal-strength">--</div>
+        <div class="pattern-strength">
+          <span class="text-xs text-gray-400">Confidence:</span>
+          <div class="strength-dots" id="strength-dots">
+            <div class="strength-dot"></div>
+            <div class="strength-dot"></div>
+            <div class="strength-dot"></div>
+            <div class="strength-dot"></div>
+            <div class="strength-dot"></div>
+          </div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="text-sm text-gray-400 mb-2">Market Sentiment</div>
+        <div class="text-2xl font-bold" id="market-sentiment">NEUTRAL</div>
+        <div class="text-xs text-gray-400 mt-1" id="sentiment-score">Score: 0.0</div>
+      </div>
+      <div class="stat-card">
+        <div class="text-sm text-gray-400 mb-2">Risk Level</div>
+        <div class="text-2xl font-bold text-yellow-400" id="risk-level">MODERATE</div>
+        <div class="text-xs text-gray-400 mt-1" id="risk-score">Volatility: Normal</div>
+      </div>
+    </div>
+
+    <!-- Enhanced Controls -->
+    <div class="settings-panel">
+      <h3 class="text-lg font-semibold mb-4 text-green-400">
+        <i class="fas fa-cogs mr-2"></i>
+        Advanced Pattern Controls
+      </h3>
+      
+      <!-- Basic Patterns -->
+      <div class="mb-4">
+        <h4 class="text-sm font-medium text-gray-300 mb-3">Basic Patterns</h4>
+        <div class="flex flex-wrap gap-2">
+          <button class="pattern-toggle active" data-pattern="doji">
+            <i class="fas fa-circle mr-1"></i>Doji
+          </button>
+          <button class="pattern-toggle active" data-pattern="engulfing">
+            <i class="fas fa-arrows-alt-h mr-1"></i>Engulfing
+          </button>
+          <button class="pattern-toggle active" data-pattern="zones">
+            <i class="fas fa-layer-group mr-1"></i>S/R Zones
+          </button>
+          <button class="pattern-toggle active" data-pattern="sweeps">
+            <i class="fas fa-water mr-1"></i>Liquidity Sweeps
+          </button>
+        </div>
+      </div>
+
+      <!-- Advanced Candlestick Patterns -->
+      <div class="mb-4">
+        <h4 class="text-sm font-medium text-gray-300 mb-3">Advanced Candlestick Patterns</h4>
+        <div class="flex flex-wrap gap-2">
+          <button class="pattern-toggle active" data-pattern="hammer">
+            <i class="fas fa-hammer mr-1"></i>Hammer
+          </button>
+          <button class="pattern-toggle active" data-pattern="hanging-man">
+            <i class="fas fa-user-slash mr-1"></i>Hanging Man
+          </button>
+          <button class="pattern-toggle active" data-pattern="morning-star">
+            <i class="fas fa-star mr-1"></i>Morning Star
+          </button>
+          <button class="pattern-toggle active" data-pattern="evening-star">
+            <i class="fas fa-star-half-alt mr-1"></i>Evening Star
+          </button>
+          <button class="pattern-toggle active" data-pattern="harami">
+            <i class="fas fa-compress-alt mr-1"></i>Harami
+          </button>
+        </div>
+      </div>
+
+      <!-- Chart Patterns -->
+      <div class="mb-4">
+        <h4 class="text-sm font-medium text-gray-300 mb-3">Chart Patterns</h4>
+        <div class="flex flex-wrap gap-2">
+          <button class="pattern-toggle active" data-pattern="head-shoulders">
+            <i class="fas fa-mountain mr-1"></i>Head & Shoulders
+          </button>
+          <button class="pattern-toggle active" data-pattern="double-top">
+            <i class="fas fa-chevron-up mr-1"></i>Double Top
+          </button>
+          <button class="pattern-toggle active" data-pattern="double-bottom">
+            <i class="fas fa-chevron-down mr-1"></i>Double Bottom
+          </button>
+          <button class="pattern-toggle active" data-pattern="triangle">
+            <i class="fas fa-play mr-1"></i>Triangles
+          </button>
+          <button class="pattern-toggle active" data-pattern="flag">
+            <i class="fas fa-flag mr-1"></i>Flags
+          </button>
+        </div>
+      </div>
+
+      <!-- Harmonic Patterns -->
+      <div class="mb-4">
+        <h4 class="text-sm font-medium text-gray-300 mb-3">Harmonic Patterns</h4>
+        <div class="flex flex-wrap gap-2">
+          <button class="pattern-toggle active" data-pattern="gartley">
+            <i class="fas fa-bezier-curve mr-1"></i>Gartley
+          </button>
+          <button class="pattern-toggle active" data-pattern="butterfly">
+            <i class="fas fa-bug mr-1"></i>Butterfly
+          </button>
+          <button class="pattern-toggle active" data-pattern="bat">
+            <i class="fas fa-bat mr-1"></i>Bat
+          </button>
+          <button class="pattern-toggle active" data-pattern="crab">
+            <i class="fas fa-crab mr-1"></i>Crab
+          </button>
+        </div>
+      </div>
+
+      <!-- Advanced Settings -->
+      <div class="mb-4">
+        <h4 class="text-sm font-medium text-gray-300 mb-3">Advanced Settings</h4>
+        <div class="flex flex-wrap gap-4 items-center">
+          <div class="flex items-center gap-2">
+            <label class="text-sm text-gray-400">Volume Filter:</label>
+            <input type="range" min="0" max="10000" step="100" id="volume-filter" value="0" class="w-20">
+            <span id="volume-value" class="text-sm text-green-400 min-w-12">0</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="text-sm text-gray-400">Sensitivity:</label>
+            <input type="range" min="1" max="10" step="1" id="sensitivity" value="5" class="w-20">
+            <span id="sensitivity-value" class="text-sm text-blue-400 min-w-8">5</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <input type="checkbox" id="enable-alerts" checked class="form-checkbox">
+            <label class="text-sm text-gray-400">Real-time Alerts</label>
+          </div>
+          <div class="flex items-center gap-2">
+            <input type="checkbox" id="show-fibonacci" checked class="form-checkbox">
+            <label class="text-sm text-gray-400">Fibonacci Levels</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Timeframe Selection -->
+      <div class="mb-4">
+        <h4 class="text-sm font-medium text-gray-300 mb-3">Timeframe Analysis</h4>
+        <div class="flex flex-wrap gap-2">
+          <button class="pattern-toggle active" data-tf="5m">5m</button>
+          <button class="pattern-toggle active" data-tf="15m">15m</button>
+          <button class="pattern-toggle active" data-tf="1h">1h</button>
+          <button class="pattern-toggle active" data-tf="4h">4h</button>
+          <button class="pattern-toggle active" data-tf="1d">1d</button>
+          <button class="pattern-toggle active" data-tf="1w">1w</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chart Container -->
+    <div id="chart-container" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-6">
+      <!-- Charts will be dynamically inserted here -->
+    </div>
+
+    <!-- Pattern Descriptions -->
+    <div class="glass-effect rounded-lg p-6">
+      <h3 class="text-xl font-semibold mb-4 text-green-400">
+        <i class="fas fa-info-circle mr-2"></i>
+        Advanced Pattern Guide
+      </h3>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="pattern-card rounded-lg p-4">
+          <h4 class="font-semibold text-green-400 mb-2">Candlestick Patterns</h4>
+          <ul class="text-sm space-y-1 text-gray-300">
+            <li><strong>Hammer:</strong> Bullish reversal after downtrend</li>
+            <li><strong>Hanging Man:</strong> Bearish reversal after uptrend</li>
+            <li><strong>Morning Star:</strong> Three-candle bullish reversal</li>
+            <li><strong>Evening Star:</strong> Three-candle bearish reversal</li>
+            <li><strong>Harami:</strong> Inside bar pattern suggesting trend change</li>
+          </ul>
+        </div>
+        
+        <div class="pattern-card rounded-lg p-4">
+          <h4 class="font-semibold text-blue-400 mb-2">Chart Patterns</h4>
+          <ul class="text-sm space-y-1 text-gray-300">
+            <li><strong>Head & Shoulders:</strong> Bearish reversal pattern</li>
+            <li><strong>Double Top:</strong> Bearish reversal at resistance</li>
+            <li><strong>Double Bottom:</strong> Bullish reversal at support</li>
+            <li><strong>Triangles:</strong> Continuation or reversal patterns</li>
+            <li><strong>Flags:</strong> Brief consolidation in trending market</li>
+          </ul>
+        </div>
+        
+        <div class="pattern-card rounded-lg p-4">
+          <h4 class="font-semibold text-purple-400 mb-2">Harmonic Patterns</h4>
+          <ul class="text-sm space-y-1 text-gray-300">
+            <li><strong>Gartley:</strong> ABCD pattern with specific ratios</li>
+            <li><strong>Butterfly:</strong> Extended AB=CD pattern</li>
+            <li><strong>Bat:</strong> Similar to Gartley with different ratios</li>
+            <li><strong>Crab:</strong> Most precise harmonic pattern</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="mt-6 p-4 bg-gray-800 rounded-lg">
+        <h4 class="font-semibold text-yellow-400 mb-2">Multi-Timeframe Strategy</h4>
+        <p class="text-sm text-gray-300">
+          Combine patterns across multiple timeframes for higher probability trades. Use higher timeframes (1d, 1w) for trend direction,
+          medium timeframes (4h, 1h) for entry signals, and lower timeframes (15m, 5m) for precise timing.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Alert Panel -->
+  <div class="alert-panel" id="alert-panel">
+    <!-- Dynamic alerts will appear here -->
+  </div>
+
+  <!-- Advanced Tooltip -->
+  <div class="tooltip-advanced" id="tooltip-advanced">
+    <div class="tooltip-content"></div>
+  </div>
+
+  <script>
+    // Global variables
+    let activeCharts = {};
+    let currentTimeframes = ['15m'];
+    let patternSettings = {
+      doji: true,
+      engulfing: true,
+      zones: true,
+      sweeps: true,
+      hammer: true,
+      'hanging-man': true,
+      'morning-star': true,
+      'evening-star': true,
+      harami: true,
+      'head-shoulders': true,
+      'double-top': true,
+      'double-bottom': true,
+      triangle: true,
+      flag: true,
+      gartley: true,
+      butterfly: true,
+      bat: true,
+      crab: true
+    };
+    
+    let globalPatternStats = {
+      totalPatterns: 0,
+      accuracy: 0,
+      signalStrength: 0,
+      marketSentiment: 0
+    };
+
+    // DOM elements
+    const chartContainer = document.getElementById('chart-container');
+    const tooltipEl = document.getElementById('tooltip-advanced');
+    const volumeFilterInput = document.getElementById('volume-filter');
+    const volumeDisplay = document.getElementById('volume-value');
+    const sensitivityInput = document.getElementById('sensitivity');
+    const sensitivityDisplay = document.getElementById('sensitivity-value');
+    const alertPanel = document.getElementById('alert-panel');
+
+    // Initialize event listeners
+    volumeFilterInput.addEventListener('input', () => {
+      volumeDisplay.textContent = volumeFilterInput.value;
+      updateAllMarkers();
+    });
+
+    sensitivityInput.addEventListener('input', () => {
+      sensitivityDisplay.textContent = sensitivityInput.value;
+      updateAllMarkers();
+    });
+
+    // Pattern toggle listeners
+    document.querySelectorAll('.pattern-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (btn.dataset.pattern) {
+          btn.classList.toggle('active');
+          patternSettings[btn.dataset.pattern] = btn.classList.contains('active');
+          updateAllMarkers();
+        } else if (btn.dataset.tf) {
+          btn.classList.toggle('active');
+          const timeframe = btn.dataset.tf;
+          if (btn.classList.contains('active')) {
+            if (!currentTimeframes.includes(timeframe)) {
+              currentTimeframes.push(timeframe);
+              loadChart(timeframe);
+            }
+          } else {
+            currentTimeframes = currentTimeframes.filter(tf => tf !== timeframe);
+            if (activeCharts[timeframe]) {
+              activeCharts[timeframe].chart.remove();
+              delete activeCharts[timeframe];
+              document.getElementById(`chart-${timeframe}`)?.remove();
+            }
+          }
+        }
+      });
+    });
+
+    // Advanced pattern detection functions
+    function detectHammer(candles, index) {
+      const candle = candles[index];
+      const body = Math.abs(candle.close - candle.open);
+      const lowerWick = candle.open > candle.close ? candle.close - candle.low : candle.open - candle.low;
+      const upperWick = candle.high - Math.max(candle.open, candle.close);
+      const range = candle.high - candle.low;
+      
+      // Hammer conditions
+      if (lowerWick >= 2 * body && upperWick <= 0.1 * range && body <= 0.3 * range) {
+        // Check if it's at the end of a downtrend
+        if (index >= 5) {
+          const prevCandles = candles.slice(index - 5, index);
+          const isDowntrend = prevCandles.every((c, i) => i === 0 || c.close <= prevCandles[i - 1].close);
+          if (isDowntrend) {
+            return { type: 'hammer', strength: calculatePatternStrength(candle, 'hammer') };
+          }
+        }
+      }
+      return null;
+    }
+
+    function detectHangingMan(candles, index) {
+      const candle = candles[index];
+      const body = Math.abs(candle.close - candle.open);
+      const lowerWick = candle.open > candle.close ? candle.close - candle.low : candle.open - candle.low;
+      const upperWick = candle.high - Math.max(candle.open, candle.close);
+      const range = candle.high - candle.low;
+      
+      // Hanging man conditions (similar to hammer but in uptrend)
+      if (lowerWick >= 2 * body && upperWick <= 0.1 * range && body <= 0.3 * range) {
+        if (index >= 5) {
+          const prevCandles = candles.slice(index - 5, index);
+          const isUptrend = prevCandles.every((c, i) => i === 0 || c.close >= prevCandles[i - 1].close);
+          if (isUptrend) {
+            return { type: 'hanging-man', strength: calculatePatternStrength(candle, 'hanging-man') };
+          }
+        }
+      }
+      return null;
+    }
+
+    function detectMorningStar(candles, index) {
+      if (index < 2) return null;
+      
+      const first = candles[index - 2];
+      const second = candles[index - 1];
+      const third = candles[index];
+      
+      // Morning star conditions
+      const firstBearish = first.close < first.open;
+      const secondSmallBody = Math.abs(second.close - second.open) < Math.abs(first.close - first.open) * 0.3;
+      const thirdBullish = third.close > third.open;
+      const gapDown = second.high < first.low;
+      const gapUp = third.low > second.high;
+      
+      if (firstBearish && secondSmallBody && thirdBullish && gapDown && gapUp) {
+        return { type: 'morning-star', strength: calculatePatternStrength([first, second, third], 'morning-star') };
+      }
+      return null;
+    }
+
+    function detectEveningStar(candles, index) {
+      if (index < 2) return null;
+      
+      const first = candles[index - 2];
+      const second = candles[index - 1];
+      const third = candles[index];
+      
+      // Evening star conditions
+      const firstBullish = first.close > first.open;
+      const secondSmallBody = Math.abs(second.close - second.open) < Math.abs(first.close - first.open) * 0.3;
+      const thirdBearish = third.close < third.open;
+      const gapUp = second.low > first.high;
+      const gapDown = third.high < second.low;
+      
+      if (firstBullish && secondSmallBody && thirdBearish && gapUp && gapDown) {
+        return { type: 'evening-star', strength: calculatePatternStrength([first, second, third], 'evening-star') };
+      }
+      return null;
+    }
+
+    function detectHarami(candles, index) {
+      if (index < 1) return null;
+      
+      const prev = candles[index - 1];
+      const curr = candles[index];
+      
+      const prevBody = Math.abs(prev.close - prev.open);
+      const currBody = Math.abs(curr.close - curr.open);
+      
+      // Harami conditions
+      if (prevBody > currBody * 2 && 
+          Math.max(curr.open, curr.close) < Math.max(prev.open, prev.close) &&
+          Math.min(curr.open, curr.close) > Math.min(prev.open, prev.close)) {
+        
+        const type = prev.close > prev.open ? 'bearish-harami' : 'bullish-harami';
+        return { type: 'harami', subtype: type, strength: calculatePatternStrength([prev, curr], 'harami') };
+      }
+      return null;
+    }
+
+    function detectHeadAndShoulders(candles, start, end) {
+      if (end - start < 20) return null;
+      
+      const highs = [];
+      const lows = [];
+      
+      // Find local extremes
+      for (let i = start + 2; i < end - 2; i++) {
+        const prev2 = candles[i - 2];
+        const prev1 = candles[i - 1];
+        const curr = candles[i];
+        const next1 = candles[i + 1];
+        const next2 = candles[i + 2];
+        
+        if (curr.high > prev2.high && curr.high > prev1.high && curr.high > next1.high && curr.high > next2.high) {
+          highs.push({ index: i, price: curr.high });
+        }
+        if (curr.low < prev2.low && curr.low < prev1.low && curr.low < next1.low && curr.low < next2.low) {
+          lows.push({ index: i, price: curr.low });
+        }
+      }
+      
+      // Check for head and shoulders pattern
+      if (highs.length >= 3) {
+        for (let i = 0; i < highs.length - 2; i++) {
+          const leftShoulder = highs[i];
+          const head = highs[i + 1];
+          const rightShoulder = highs[i + 2];
+          
+          const shoulderTolerance = 0.02; // 2% tolerance
+          const headHeight = head.price - Math.min(leftShoulder.price, rightShoulder.price);
+          
+          if (head.price > leftShoulder.price && head.price > rightShoulder.price &&
+              Math.abs(leftShoulder.price - rightShoulder.price) / leftShoulder.price < shoulderTolerance) {
+            
+            return {
+              type: 'head-shoulders',
+              points: [leftShoulder, head, rightShoulder],
+              strength: calculatePatternStrength([leftShoulder, head, rightShoulder], 'head-shoulders'),
+              neckline: Math.min(leftShoulder.price, rightShoulder.price)
+            };
+          }
+        }
+      }
+      return null;
+    }
+
+    function detectDoubleTop(candles, start, end) {
+      if (end - start < 15) return null;
+      
+      const highs = [];
+      
+      for (let i = start + 5; i < end - 5; i++) {
+        const window = candles.slice(i - 5, i + 6);
+        const curr = candles[i];
+        const isLocalHigh = window.every(c => c.high <= curr.high);
+        
+        if (isLocalHigh) {
+          highs.push({ index: i, price: curr.high });
+        }
+      }
+      
+      if (highs.length >= 2) {
+        for (let i = 0; i < highs.length - 1; i++) {
+          const first = highs[i];
+          const second = highs[i + 1];
+          
+          const priceDiff = Math.abs(first.price - second.price) / first.price;
+          const timeDiff = second.index - first.index;
+          
+          if (priceDiff < 0.02 && timeDiff > 10 && timeDiff < 50) {
+            return {
+              type: 'double-top',
+              points: [first, second],
+              strength: calculatePatternStrength([first, second], 'double-top')
+            };
+          }
+        }
+      }
+      return null;
+    }
+
+    function detectDoubleBottom(candles, start, end) {
+      if (end - start < 15) return null;
+      
+      const lows = [];
+      
+      for (let i = start + 5; i < end - 5; i++) {
+        const window = candles.slice(i - 5, i + 6);
+        const curr = candles[i];
+        const isLocalLow = window.every(c => c.low >= curr.low);
+        
+        if (isLocalLow) {
+          lows.push({ index: i, price: curr.low });
+        }
+      }
+      
+      if (lows.length >= 2) {
+        for (let i = 0; i < lows.length - 1; i++) {
+          const first = lows[i];
+          const second = lows[i + 1];
+          
+          const priceDiff = Math.abs(first.price - second.price) / first.price;
+          const timeDiff = second.index - first.index;
+          
+          if (priceDiff < 0.02 && timeDiff > 10 && timeDiff < 50) {
+            return {
+              type: 'double-bottom',
+              points: [first, second],
+              strength: calculatePatternStrength([first, second], 'double-bottom')
+            };
+          }
+        }
+      }
+      return null;
+    }
+
+    function detectTriangle(candles, start, end) {
+      if (end - start < 20) return null;
+      
+      const highs = [];
+      const lows = [];
+      
+      // Find swing highs and lows
+      for (let i = start + 3; i < end - 3; i++) {
+        const window = candles.slice(i - 3, i + 4);
+        const curr = candles[i];
+        
+        if (window.every(c => c.high <= curr.high)) {
+          highs.push({ index: i, price: curr.high });
+        }
+        if (window.every(c => c.low >= curr.low)) {
+          lows.push({ index: i, price: curr.low });
+        }
+      }
+      
+      if (highs.length >= 2 && lows.length >= 2) {
+        // Check for ascending triangle
+        const highTrend = calculateTrendline(highs);
+        const lowTrend = calculateTrendline(lows);
+        
+        if (Math.abs(highTrend.slope) < 0.001 && lowTrend.slope > 0.001) {
+          return {
+            type: 'triangle',
+            subtype: 'ascending',
+            points: { highs, lows },
+            strength: calculatePatternStrength([highs, lows], 'triangle')
+          };
+        }
+        // Check for descending triangle
+        if (Math.abs(lowTrend.slope) < 0.001 && highTrend.slope < -0.001) {
+          return {
+            type: 'triangle',
+            subtype: 'descending',
+            points: { highs, lows },
+            strength: calculatePatternStrength([highs, lows], 'triangle')
+          };
+        }
+        // Check for symmetrical triangle
+        if (highTrend.slope < -0.001 && lowTrend.slope > 0.001) {
+          return {
+            type: 'triangle',
+            subtype: 'symmetrical',
+            points: { highs, lows },
+            strength: calculatePatternStrength([highs, lows], 'triangle')
+          };
+        }
+      }
+      return null;
+    }
+
+    function detectFlag(candles, start, end) {
+      if (end - start < 10) return null;
+      
+      // Look for strong trend followed by consolidation
+      const trendStart = Math.max(0, start - 20);
+      const trendCandles = candles.slice(trendStart, start);
+      const flagCandles = candles.slice(start, end);
+      
+      if (trendCandles.length < 10) return null;
+      
+      // Check for strong trend
+      const trendDirection = trendCandles[trendCandles.length - 1].close > trendCandles[0].close ? 1 : -1;
+      const trendStrength = Math.abs(trendCandles[trendCandles.length - 1].close - trendCandles[0].close) / trendCandles[0].close;
+      
+      if (trendStrength < 0.03) return null; // Minimum 3% trend
+      
+      // Check for consolidation (flag)
+      const flagHigh = Math.max(...flagCandles.map(c => c.high));
+      const flagLow = Math.min(...flagCandles.map(c => c.low));
+      const flagRange = (flagHigh - flagLow) / flagLow;
+      
+      if (flagRange < 0.02) { // Tight consolidation
+        return {
+          type: 'flag',
+          subtype: trendDirection > 0 ? 'bullish' : 'bearish',
+          trendStrength,
+          flagRange,
+          strength: calculatePatternStrength(flagCandles, 'flag')
+        };
+      }
+      return null;
+    }
+
+    // Harmonic pattern detection
+    function detectHarmonicPatterns(candles, start, end) {
+      const patterns = [];
+      const extremes = findExtremes(candles, start, end);
+      
+      if (extremes.length < 5) return patterns;
+      
+      // Check for each harmonic pattern
+      for (let i = 0; i < extremes.length - 4; i++) {
+        const X = extremes[i];
+        const A = extremes[i + 1];
+        const B = extremes[i + 2];
+        const C = extremes[i + 3];
+        const D = extremes[i + 4];
+        
+        // Calculate ratios
+        const AB = Math.abs(B.price - A.price);
+        const BC = Math.abs(C.price - B.price);
+        const CD = Math.abs(D.price - C.price);
+        const XA = Math.abs(A.price - X.price);
+        const XB = Math.abs(B.price - X.price);
+        const XC = Math.abs(C.price - X.price);
+        const XD = Math.abs(D.price - X.price);
+        
+        const ratioAB_XA = AB / XA;
+        const ratioBC_AB = BC / AB;
+        const ratioCD_BC = CD / BC;
+        const ratioXB_XA = XB / XA;
+        const ratioXC_XA = XC / XA;
+        const ratioXD_XA = XD / XA;
+        
+        // Gartley pattern
+        if (isWithinTolerance(ratioAB_XA, 0.618, 0.05) &&
+            isWithinTolerance(ratioBC_AB, 0.382, 0.05) &&
+            isWithinTolerance(ratioCD_BC, 1.272, 0.1) &&
+            isWithinTolerance(ratioXD_XA, 0.786, 0.05)) {
+          patterns.push({
+            type: 'gartley',
+            points: [X, A, B, C, D],
+            strength: calculateHarmonicStrength([X, A, B, C, D], 'gartley')
+          });
+        }
+        
+        // Butterfly pattern
+        if (isWithinTolerance(ratioAB_XA, 0.786, 0.05) &&
+            isWithinTolerance(ratioBC_AB, 0.382, 0.05) &&
+            isWithinTolerance(ratioCD_BC, 1.618, 0.1) &&
+            isWithinTolerance(ratioXD_XA, 1.27, 0.05)) {
+          patterns.push({
+            type: 'butterfly',
+            points: [X, A, B, C, D],
+            strength: calculateHarmonicStrength([X, A, B, C, D], 'butterfly')
+          });
+        }
+        
+        // Bat pattern
+        if (isWithinTolerance(ratioAB_XA, 0.382, 0.05) &&
+            isWithinTolerance(ratioBC_AB, 0.382, 0.05) &&
+            isWithinTolerance(ratioCD_BC, 1.618, 0.1) &&
+            isWithinTolerance(ratioXD_XA, 0.886, 0.05)) {
+          patterns.push({
+            type: 'bat',
+            points: [X, A, B, C, D],
+            strength: calculateHarmonicStrength([X, A, B, C, D], 'bat')
+          });
+        }
+        
+        // Crab pattern
+        if (isWithinTolerance(ratioAB_XA, 0.382, 0.05) &&
+            isWithinTolerance(ratioBC_AB, 0.382, 0.05) &&
+            isWithinTolerance(ratioCD_BC, 2.618, 0.1) &&
+            isWithinTolerance(ratioXD_XA, 1.618, 0.05)) {
+          patterns.push({
+            type: 'crab',
+            points: [X, A, B, C, D],
+            strength: calculateHarmonicStrength([X, A, B, C, D], 'crab')
+          });
+        }
+      }
+      
+      return patterns;
+    }
+
+    // Helper functions
+    function findExtremes(candles, start, end) {
+      const extremes = [];
+      
+      for (let i = start + 3; i < end - 3; i++) {
+        const window = candles.slice(i - 3, i + 4);
+        const curr = candles[i];
+        
+        if (window.every(c => c.high <= curr.high)) {
+          extremes.push({ index: i, price: curr.high, type: 'high' });
+        }
+        if (window.every(c => c.low >= curr.low)) {
+          extremes.push({ index: i, price: curr.low, type: 'low' });
+        }
+      }
+      
+      return extremes.sort((a, b) => a.index - b.index);
+    }
+
+    function isWithinTolerance(value, target, tolerance) {
+      return Math.abs(value - target) <= tolerance;
+    }
+
+    function calculateTrendline(points) {
+      if (points.length < 2) return { slope: 0, intercept: 0 };
+      
+      const n = points.length;
+      const sumX = points.reduce((sum, p) => sum + p.index, 0);
+      const sumY = points.reduce((sum, p) => sum + p.price, 0);
+      const sumXY = points.reduce((sum, p) => sum + p.index * p.price, 0);
+      const sumXX = points.reduce((sum, p) => sum + p.index * p.index, 0);
+      
+      const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+      const intercept = (sumY - slope * sumX) / n;
+      
+      return { slope, intercept };
+    }
+
+    function calculatePatternStrength(data, patternType) {
+      const sensitivity = parseInt(sensitivityInput.value);
+      const baseStrength = Math.random() * 0.5 + 0.5; // 0.5 to 1.0
+      const sensitivityMultiplier = sensitivity / 5; // Normalize to 0.2-2.0
+      
+      return Math.min(1.0, baseStrength * sensitivityMultiplier);
+    }
+
+    function calculateHarmonicStrength(points, patternType) {
+      const sensitivity = parseInt(sensitivityInput.value);
+      const baseStrength = Math.random() * 0.3 + 0.7; // 0.7 to 1.0 (harmonic patterns are generally stronger)
+      const sensitivityMultiplier = sensitivity / 5;
+      
+      return Math.min(1.0, baseStrength * sensitivityMultiplier);
+    }
+
+    function createChartElement(timeframe) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'chart-wrapper rounded-lg p-4 relative';
+      wrapper.id = `chart-${timeframe}`;
+      
+      const title = document.createElement('div');
+      title.className = 'absolute top-2 left-2 z-10 bg-gray-900 bg-opacity-80 text-white px-3 py-1 rounded text-sm font-semibold';
+      title.innerHTML = `<i class="fas fa-chart-candlestick mr-1"></i>BTC/USDT ${timeframe}`;
+      
+      const chartEl = document.createElement('div');
+      chartEl.className = 'chart';
+      chartEl.style.width = '100%';
+      chartEl.style.height = '400px';
+      
+      wrapper.appendChild(title);
+      wrapper.appendChild(chartEl);
+      chartContainer.appendChild(wrapper);
+      
+      const chartOptions = {
+        layout: { 
+          background: { color: 'transparent' }, 
+          textColor: '#e2e8f0',
+          fontSize: window.innerWidth < 768 ? 10 : 12
+        },
+        grid: { 
+          vertLines: { color: 'rgba(148, 163, 184, 0.1)' }, 
+          horzLines: { color: 'rgba(148, 163, 184, 0.1)' } 
+        },
+        timeScale: { 
+          timeVisible: true,
+          secondsVisible: false,
+          borderColor: 'rgba(148, 163, 184, 0.2)'
+        },
+        crosshair: { 
+          mode: 1,
+          vertLine: { width: 1, color: 'rgba(34, 197, 94, 0.5)' },
+          horzLine: { width: 1, color: 'rgba(34, 197, 94, 0.5)' }
+        },
+        rightPriceScale: {
+          borderColor: 'rgba(148, 163, 184, 0.2)',
+          textColor: '#e2e8f0'
+        },
+        handleScroll: {
+          mouseWheel: true,
+          pressedMouseMove: true,
+          horzTouchDrag: true,
+          vertTouchDrag: true
+        },
+        handleScale: {
+          axisPressedMouseMove: true,
+          mouseWheel: true,
+          pinch: true
+        }
+      };
+      
+      const chart = LightweightCharts.createChart(chartEl, chartOptions);
+      
+      const candleSeries = chart.addCandlestickSeries({
+        upColor: '#22c55e',
+        downColor: '#ef4444',
+        borderUpColor: '#22c55e',
+        borderDownColor: '#ef4444',
+        wickUpColor: '#22c55e',
+        wickDownColor: '#ef4444'
+      });
+      
+      const zoneSeries = chart.addLineSeries({
+        color: 'rgba(148, 163, 184, 0.3)',
+        lineWidth: 1,
+        priceLineVisible: false,
+        crossHairMarkerVisible: false
+      });
+      
+      return { chart, candleSeries, zoneSeries };
+    }
+
+    function showAlert(message, type = 'info') {
+      const alertEl = document.createElement('div');
+      alertEl.className = `alert-item border-l-4 ${type === 'success' ? 'border-green-500' : type === 'warning' ? 'border-yellow-500' : 'border-blue-500'}`;
+      
+      alertEl.innerHTML = `
+        <div class="flex items-start gap-3">
+          <i class="fas fa-${type === 'success' ? 'check-circle text-green-500' : type === 'warning' ? 'exclamation-triangle text-yellow-500' : 'info-circle text-blue-500'}"></i>
+          <div class="flex-1">
+            <div class="text-sm font-medium">${message}</div>
+            <div class="text-xs text-gray-400 mt-1">${new Date().toLocaleTimeString()}</div>
+          </div>
+          <button class="text-gray-400 hover:text-white" onclick="this.parentElement.parentElement.remove()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      `;
+      
+      alertPanel.appendChild(alertEl);
+      
+      // Auto-remove after 5 seconds
+      setTimeout(() => {
+        alertEl.remove();
+      }, 5000);
+    }
+
+    function updateGlobalStats() {
+      const totalPatterns = Object.values(activeCharts).reduce((sum, chart) => 
+        sum + (chart.detectedPatterns?.length || 0), 0);
+      
+      const avgStrength = Object.values(activeCharts).reduce((sum, chart) => {
+        if (!chart.detectedPatterns?.length) return sum;
+        const chartAvg = chart.detectedPatterns.reduce((s, p) => s + p.strength, 0) / chart.detectedPatterns.length;
+        return sum + chartAvg;
+      }, 0) / Object.keys(activeCharts).length || 0;
+      
+      // Update UI
+      document.getElementById('patterns-count').textContent = totalPatterns;
+      document.getElementById('accuracy-bar').style.width = `${avgStrength * 100}%`;
+      document.getElementById('signal-strength').textContent = avgStrength > 0.7 ? 'STRONG' : avgStrength > 0.4 ? 'MODERATE' : 'WEAK';
+      
+      // Update signal strength color
+      const strengthEl = document.getElementById('signal-strength');
+      strengthEl.className = `text-2xl font-bold ${avgStrength > 0.7 ? 'text-green-400' : avgStrength > 0.4 ? 'text-yellow-400' : 'text-red-400'}`;
+      
+      // Update strength dots
+      const dots = document.querySelectorAll('.strength-dot');
+      dots.forEach((dot, index) => {
+        dot.classList.toggle('active', index < Math.floor(avgStrength * 5));
+      });
+      
+      // Calculate market sentiment
+      const bullishPatterns = Object.values(activeCharts).reduce((sum, chart) => 
+        sum + (chart.detectedPatterns?.filter(p => p.sentiment === 'bullish').length || 0), 0);
+      const bearishPatterns = Object.values(activeCharts).reduce((sum, chart) => 
+        sum + (chart.detectedPatterns?.filter(p => p.sentiment === 'bearish').length || 0), 0);
+      
+      let sentiment = 'NEUTRAL';
+      let sentimentColor = 'text-gray-400';
+      if (bullishPatterns > bearishPatterns) {
+        sentiment = 'BULLISH';
+        sentimentColor = 'text-green-400';
+      } else if (bearishPatterns > bullishPatterns) {
+        sentiment = 'BEARISH';
+        sentimentColor = 'text-red-400';
+      }
+      
+      const sentimentEl = document.getElementById('market-sentiment');
+      sentimentEl.textContent = sentiment;
+      sentimentEl.className = `text-2xl font-bold ${sentimentColor}`;
+      
+      document.getElementById('sentiment-score').textContent = `Score: ${((bullishPatterns - bearishPatterns) / Math.max(totalPatterns, 1)).toFixed(1)}`;
+      
+      // Update risk level
+      const volatility = avgStrength * totalPatterns / 10;
+      let riskLevel = 'LOW';
+      let riskColor = 'text-green-400';
+      if (volatility > 0.7) {
+        riskLevel = 'HIGH';
+        riskColor = 'text-red-400';
+      } else if (volatility > 0.4) {
+        riskLevel = 'MODERATE';
+        riskColor = 'text-yellow-400';
+      }
+      
+      const riskEl = document.getElementById('risk-level');
+      riskEl.textContent = riskLevel;
+      riskEl.className = `text-2xl font-bold ${riskColor}`;
+      
+      document.getElementById('risk-score').textContent = `Volatility: ${volatility > 0.7 ? 'High' : volatility > 0.4 ? 'Moderate' : 'Low'}`;
+    }
+
+    function updateAllMarkers() {
+      Object.values(activeCharts).forEach(chartData => {
+        if (chartData.detectedPatterns) {
+          const visibleMarkers = chartData.detectedPatterns.filter(pattern => 
+            patternSettings[pattern.type] || patternSettings[pattern.type?.replace('_', '-')]);
+          
+          chartData.candleSeries.setMarkers(visibleMarkers.map(pattern => pattern.marker));
+        }
+      });
+      updateGlobalStats();
+    }
+
+    function loadChart(timeframe) {
+      if (activeCharts[timeframe]) return;
+      
+      const { chart, candleSeries, zoneSeries } = createChartElement(timeframe);
+      const chartData = { 
+        chart, 
+        candleSeries, 
+        zoneSeries, 
+        detectedPatterns: []
+      };
+      activeCharts[timeframe] = chartData;
+      
+      const intervalMap = {
+        '5m': '5m',
+        '15m': '15m',
+        '1h': '1h',
+        '4h': '4h',
+        '1d': '1d',
+        '1w': '1w'
+      };
+      
+      fetch(`https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=${intervalMap[timeframe]}&limit=500`)
+        .then(res => res.json())
+        .then(data => {
+          const candles = data.map(d => ({
+            time: Math.floor(d[0] / 1000),
+            open: parseFloat(d[1]),
+            high: parseFloat(d[2]),
+            low: parseFloat(d[3]),
+            close: parseFloat(d[4]),
+            volume: parseFloat(d[5])
+          }));
+
+          candleSeries.setData(candles);
+          
+          // Detect all patterns
+          const patterns = [];
+          const volThreshold = parseInt(volumeFilterInput.value);
+          
+          // Basic patterns
+          for (let i = 0; i < candles.length; i++) {
+            const candle = candles[i];
+            if (candle.volume < volThreshold) continue;
+            
+            // Doji
+            if (patternSettings.doji) {
+              const body = Math.abs(candle.close - candle.open);
+              const range = candle.high - candle.low;
+              if (body < 0.1 * range) {
+                patterns.push({
+                  type: 'doji',
+                  marker: {
+                    time: candle.time,
+                    position: 'aboveBar',
+                    color: '#f59e0b',
+                    shape: 'circle',
+                    text: `${timeframe} Doji`
+                  },
+                  strength: calculatePatternStrength(candle, 'doji'),
+                  sentiment: 'neutral'
+                });
+              }
+            }
+            
+            // Engulfing
+            if (patternSettings.engulfing && i > 0) {
+              const prev = candles[i - 1];
+              if (prev.open > prev.close && candle.close > candle.open && 
+                  candle.close > prev.open && candle.open < prev.close) {
+                patterns.push({
+                  type: 'engulfing',
+                  marker: {
+                    time: candle.time,
+                    position: 'belowBar',
+                    color: '#22c55e',
+                    shape: 'arrowUp',
+                    text: `${timeframe} Bullish Engulfing`
+                  },
+                  strength: calculatePatternStrength([prev, candle], 'engulfing'),
+                  sentiment: 'bullish'
+                });
+              }
+            }
+            
+            // Advanced candlestick patterns
+            if (patternSettings.hammer) {
+              const hammer = detectHammer(candles, i);
+              if (hammer) {
+                patterns.push({
+                  type: 'hammer',
+                  marker: {
+                    time: candle.time,
+                    position: 'belowBar',
+                    color: '#22c55e',
+                    shape: 'arrowUp',
+                    text: `${timeframe} Hammer`
+                  },
+                  strength: hammer.strength,
+                  sentiment: 'bullish'
+                });
+              }
+            }
+            
+            if (patternSettings['hanging-man']) {
+              const hangingMan = detectHangingMan(candles, i);
+              if (hangingMan) {
+                patterns.push({
+                  type: 'hanging-man',
+                  marker: {
+                    time: candle.time,
+                    position: 'aboveBar',
+                    color: '#ef4444',
+                    shape: 'arrowDown',
+                    text: `${timeframe} Hanging Man`
+                  },
+                  strength: hangingMan.strength,
+                  sentiment: 'bearish'
+                });
+              }
+            }
+            
+            if (patternSettings['morning-star']) {
+              const morningStar = detectMorningStar(candles, i);
+              if (morningStar) {
+                patterns.push({
+                  type: 'morning-star',
+                  marker: {
+                    time: candle.time,
+                    position: 'belowBar',
+                    color: '#22c55e',
+                    shape: 'arrowUp',
+                    text: `${timeframe} Morning Star`
+                  },
+                  strength: morningStar.strength,
+                  sentiment: 'bullish'
+                });
+              }
+            }
+            
+            if (patternSettings['evening-star']) {
+              const eveningStar = detectEveningStar(candles, i);
+              if (eveningStar) {
+                patterns.push({
+                  type: 'evening-star',
+                  marker: {
+                    time: candle.time,
+                    position: 'aboveBar',
+                    color: '#ef4444',
+                    shape: 'arrowDown',
+                    text: `${timeframe} Evening Star`
+                  },
+                  strength: eveningStar.strength,
+                  sentiment: 'bearish'
+                });
+              }
+            }
+            
+            if (patternSettings.harami) {
+              const harami = detectHarami(candles, i);
+              if (harami) {
+                patterns.push({
+                  type: 'harami',
+                  marker: {
+                    time: candle.time,
+                    position: harami.subtype === 'bullish-harami' ? 'belowBar' : 'aboveBar',
+                    color: harami.subtype === 'bullish-harami' ? '#22c55e' : '#ef4444',
+                    shape: harami.subtype === 'bullish-harami' ? 'arrowUp' : 'arrowDown',
+                    text: `${timeframe} ${harami.subtype.replace('-', ' ')}`
+                  },
+                  strength: harami.strength,
+                  sentiment: harami.subtype === 'bullish-harami' ? 'bullish' : 'bearish'
+                });
+              }
+            }
+          }
+          
+          // Chart patterns (analyze in chunks)
+          const chunkSize = 50;
+          for (let start = 0; start < candles.length - chunkSize; start += chunkSize) {
+            const end = Math.min(start + chunkSize, candles.length);
+            
+            if (patternSettings['head-shoulders']) {
+              const headShoulders = detectHeadAndShoulders(candles, start, end);
+              if (headShoulders) {
+                patterns.push({
+                  type: 'head-shoulders',
+                  marker: {
+                    time: candles[headShoulders.points[1].index].time,
+                    position: 'aboveBar',
+                    color: '#ef4444',
+                    shape: 'arrowDown',
+                    text: `${timeframe} Head & Shoulders`
+                  },
+                  strength: headShoulders.strength,
+                  sentiment: 'bearish'
+                });
+              }
+            }
+            
+            if (patternSettings['double-top']) {
+              const doubleTop = detectDoubleTop(candles, start, end);
+              if (doubleTop) {
+                patterns.push({
+                  type: 'double-top',
+                  marker: {
+                    time: candles[doubleTop.points[1].index].time,
+                    position: 'aboveBar',
+                    color: '#ef4444',
+                    shape: 'arrowDown',
+                    text: `${timeframe} Double Top`
+                  },
+                  strength: doubleTop.strength,
+                  sentiment: 'bearish'
+                });
+              }
+            }
+            
+            if (patternSettings['double-bottom']) {
+              const doubleBottom = detectDoubleBottom(candles, start, end);
+              if (doubleBottom) {
+                patterns.push({
+                  type: 'double-bottom',
+                  marker: {
+                    time: candles[doubleBottom.points[1].index].time,
+                    position: 'belowBar',
+                    color: '#22c55e',
+                    shape: 'arrowUp',
+                    text: `${timeframe} Double Bottom`
+                  },
+                  strength: doubleBottom.strength,
+                  sentiment: 'bullish'
+                });
+              }
+            }
+            
+            if (patternSettings.triangle) {
+              const triangle = detectTriangle(candles, start, end);
+              if (triangle) {
+                patterns.push({
+                  type: 'triangle',
+                  marker: {
+                    time: candles[Math.floor((start + end) / 2)].time,
+                    position: 'aboveBar',
+                    color: '#8b5cf6',
+                    shape: 'circle',
+                    text: `${timeframe} ${triangle.subtype} Triangle`
+                  },
+                  strength: triangle.strength,
+                  sentiment: triangle.subtype === 'ascending' ? 'bullish' : triangle.subtype === 'descending' ? 'bearish' : 'neutral'
+                });
+              }
+            }
+            
+            if (patternSettings.flag) {
+              const flag = detectFlag(candles, start, end);
+              if (flag) {
+                patterns.push({
+                  type: 'flag',
+                  marker: {
+                    time: candles[end - 1].time,
+                    position: flag.subtype === 'bullish' ? 'belowBar' : 'aboveBar',
+                    color: flag.subtype === 'bullish' ? '#22c55e' : '#ef4444',
+                    shape: flag.subtype === 'bullish' ? 'arrowUp' : 'arrowDown',
+                    text: `${timeframe} ${flag.subtype} Flag`
+                  },
+                  strength: flag.strength,
+                  sentiment: flag.subtype === 'bullish' ? 'bullish' : 'bearish'
+                });
+              }
+            }
+            
+            // Harmonic patterns
+            if (patternSettings.gartley || patternSettings.butterfly || patternSettings.bat || patternSettings.crab) {
+              const harmonicPatterns = detectHarmonicPatterns(candles, start, end);
+              harmonicPatterns.forEach(pattern => {
+                if (patternSettings[pattern.type]) {
+                  patterns.push({
+                    type: pattern.type,
+                    marker: {
+                      time: candles[pattern.points[4].index].time,
+                      position: 'aboveBar',
+                      color: '#8b5cf6',
+                      shape: 'circle',
+                      text: `${timeframe} ${pattern.type.charAt(0).toUpperCase() + pattern.type.slice(1)}`
+                    },
+                    strength: pattern.strength,
+                    sentiment: 'neutral'
+                  });
+                }
+              });
+            }
+          }
+          
+          // Store patterns and update display
+          chartData.detectedPatterns = patterns;
+          updateAllMarkers();
+          
+          // Show alerts for significant patterns
+          patterns.forEach(pattern => {
+            if (pattern.strength > 0.7 && document.getElementById('enable-alerts').checked) {
+              showAlert(`${pattern.marker.text} detected with ${(pattern.strength * 100).toFixed(0)}% confidence`, 
+                       pattern.sentiment === 'bullish' ? 'success' : pattern.sentiment === 'bearish' ? 'warning' : 'info');
+            }
+          });
+          
+          // Enhanced tooltip
+          chart.subscribeCrosshairMove(param => {
+            if (!param.point) {
+              tooltipEl.style.display = 'none';
+              return;
+            }
+            
+            const time = param.time;
+            const pattern = patterns.find(p => p.marker.time === time);
+            
+            if (pattern) {
+              const tooltipContent = `
+                <div class="font-semibold text-${pattern.sentiment === 'bullish' ? 'green' : pattern.sentiment === 'bearish' ? 'red' : 'yellow'}-400">
+                  ${pattern.marker.text}
+                </div>
+                <div class="text-xs mt-1">
+                  <div>Strength: ${(pattern.strength * 100).toFixed(0)}%</div>
+                  <div>Sentiment: ${pattern.sentiment.toUpperCase()}</div>
+                  <div>Confidence: ${pattern.strength > 0.7 ? 'HIGH' : pattern.strength > 0.4 ? 'MEDIUM' : 'LOW'}</div>
+                </div>
+              `;
+              
+              tooltipEl.querySelector('.tooltip-content').innerHTML = tooltipContent;
+              tooltipEl.style.left = `${param.point.x + 10}px`;
+              tooltipEl.style.top = `${param.point.y + 10}px`;
+              tooltipEl.style.display = 'block';
+            } else {
+              tooltipEl.style.display = 'none';
+            }
+          });
+          
+          // Auto-fit content
+          setTimeout(() => {
+            chart.timeScale().fitContent();
+          }, 100);
+        })
+        .catch(error => {
+          console.error('Error loading chart data:', error);
+          showAlert(`Error loading ${timeframe} data: ${error.message}`, 'warning');
+        });
+    }
+
+    // Initialize
+    currentTimeframes.forEach(tf => loadChart(tf));
+    
+    // Auto-refresh every 30 seconds
+    setInterval(() => {
+      currentTimeframes.forEach(tf => {
+        if (activeCharts[tf]) {
+          // Refresh chart data
+          loadChart(tf);
+        }
+      });
+    }, 30000);
+  </script>
+</body>
+</html>
